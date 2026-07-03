@@ -16,6 +16,7 @@ from analysis.parser import BenchmarkParser
 from analysis.statistics import BenchmarkStatistics
 from analysis.charts import BenchmarkCharts
 from analysis.inferential import InferentialStatistics
+from analysis.report import BenchmarkReport
 
 def main():
     """Execute the complete benchmark analysis pipeline."""
@@ -71,6 +72,13 @@ def main():
         statistics_output / "inferential_statistics.xlsx",
         index=False,
     )
+
+    report = BenchmarkReport(
+        summary_df,
+        inferential_df,
+    )
+
+    report.generate()
 
     # Generate benchmark charts
     charts = BenchmarkCharts(summary_df)
