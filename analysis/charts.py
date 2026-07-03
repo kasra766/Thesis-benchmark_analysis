@@ -32,13 +32,16 @@ class BenchmarkCharts:
 
     def generate_all(self):
         """
-        Generate charts for every benchmark scenario.
+        Generate all benchmark charts for every scenario.
         """
 
         scenarios = self.df["scenario"].unique()
 
         for scenario in scenarios:
             self.average_latency_chart(scenario)
+            self.p95_latency_chart(scenario)
+            self.throughput_chart(scenario)
+            self.error_rate_chart(scenario)
 
     def average_latency_chart(self, scenario: str):
         """
@@ -60,8 +63,8 @@ class BenchmarkCharts:
             mono["avg_latency"],
             marker="o",
             markersize=8,
-            linestyle="-",
             linewidth=2,
+            linestyle="-",
             label="Monolithic",
         )
 
@@ -70,13 +73,146 @@ class BenchmarkCharts:
             micro["avg_latency"],
             marker="s",
             markersize=8,
-            linestyle="-",
             linewidth=2,
+            linestyle="--",
             label="Microservices",
         )
 
+        self._apply_common_style(
+            title=f"{scenario.replace('-', ' ').title()} - Average Response Time",
+            ylabel="Average Response Time (ms)",
+        )
+
+        self._save_chart(scenario, "avg_latency")
+
+    def p95_latency_chart(self, scenario: str):
+        """
+        Generate P95 Response Time chart.
+        """
+
+        scenario_df = self.df[self.df["scenario"] == scenario]
+
+        mono = scenario_df[scenario_df["architecture"] == "mono"]
+        micro = scenario_df[scenario_df["architecture"] == "micro"]
+
+        plt.figure(figsize=(9, 6))
+
+        plt.plot(
+            mono["vus"],
+            mono["p95_latency"],
+            marker="o",
+            markersize=8,
+            linewidth=2,
+            linestyle="-",
+            label="Monolithic",
+        )
+
+        plt.plot(
+            micro["vus"],
+            micro["p95_latency"],
+            marker="s",
+            markersize=8,
+            linewidth=2,
+            linestyle="--",
+            label="Microservices",
+        )
+
+        self._apply_common_style(
+            title=f"{scenario.replace('-', ' ').title()} - P95 Response Time",
+            ylabel="P95 Response Time (ms)",
+        )
+
+        self._save_chart(scenario, "p95_latency")
+
+    def throughput_chart(self, scenario: str):
+        """
+        Generate Requests per Second chart.
+        """
+
+        scenario_df = self.df[self.df["scenario"] == scenario]
+
+        mono = scenario_df[scenario_df["architecture"] == "mono"]
+        micro = scenario_df[scenario_df["architecture"] == "micro"]
+
+        plt.figure(figsize=(9, 6))
+
+        plt.plot(
+            mono["vus"],
+            mono["avg_requests"],
+            marker="o",
+            markersize=8,
+            linewidth=2,
+            linestyle="-",
+            label="Monolithic",
+        )
+
+        plt.plot(
+            micro["vus"],
+            micro["avg_requests"],
+            marker="s",
+            markersize=8,
+            linewidth=2,
+            linestyle="--",
+            label="Microservices",
+        )
+
+        self._apply_common_style(
+            title=f"{scenario.replace('-', ' ').title()} - Throughput",
+            ylabel="Requests per Second",
+        )
+
+        self._save_chart(scenario, "throughput")
+
+    def error_rate_chart(self, scenario: str):
+        """
+        Generate Error Rate chart.
+        """
+
+        scenario_df = self.df[self.df["scenario"] == scenario]
+
+        mono = scenario_df[scenario_df["architecture"] == "mono"]
+        micro = scenario_df[scenario_df["architecture"] == "micro"]
+
+        plt.figure(figsize=(9, 6))
+
+        plt.plot(
+            mono["vus"],
+            mono["avg_error_rate"] * 100,
+            marker="o",
+            markersize=8,
+            linewidth=2,
+            linestyle="-",
+            label="Monolithic",
+        )
+
+        plt.plot(
+            micro["vus"],
+            micro["avg_error_rate"] * 100,
+            marker="s",
+            markersize=8,
+            linewidth=2,
+            linestyle="--",
+            label="Microservices",
+        )
+
+        self._apply_common_style(
+            title=f"{scenario.replace('-', ' ').title()} - Error Rate",
+            ylabel="Error Rate (%)",
+        )
+
+        self._save_chart(scenario, "error_rate")
+
+    def _apply_common_style(self, title: str, ylabel: str):
+        """
+        Apply a consistent visual style to every generated chart.
+
+        Args:
+            title: Figure title.
+            ylabel: Y-axis label.
+        """
+
         plt.title(
-            f"{scenario.replace('-', ' ').title()} - Average Response Time",
+            title,
             fontsize=18,
             fontweight="bold",
         )
@@ -87,15 +223,16 @@ class BenchmarkCharts:
         )
 
         plt.ylabel(
-            "Average Response Time (ms)",
+            ylabel,
             fontsize=14,
         )
 
-        plt.xticks(fontsize=12)
+        plt.xticks(
+            [10, 50, 100, 200],
+            fontsize=12,
+        )
 
         plt.yticks(fontsize=12)
-
-        plt.xticks([10, 50, 100, 200])
 
         plt.grid(
             linestyle="--",
@@ -108,14 +245,27 @@ class BenchmarkCharts:
             loc="upper left",
         )
 
+        plt.tight_layout(pad=2)
+
+    def _save_chart(self, scenario: str, filename: str):
+        """
+        Save a chart in both PNG and PDF formats.
+
+        Args:
+            scenario: Benchmark scenario name.
+            filename: Output filename without extension.
+        """
 
         output_dir = Path("outputs/charts") / scenario
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        plt.tight_layout(pad=2)
+        plt.savefig(
+            output_dir / f"{filename}.png",
+            dpi=300,
+        )
 
-        plt.savefig(output_dir / "avg_latency.png", dpi=300)
-
-        plt.savefig(output_dir / "avg_latency.pdf")
+        plt.savefig(
+            output_dir / f"{filename}.pdf",
+        )
 
         plt.close()
