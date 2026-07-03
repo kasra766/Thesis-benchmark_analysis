@@ -15,6 +15,7 @@ from pathlib import Path
 from analysis.parser import BenchmarkParser
 from analysis.statistics import BenchmarkStatistics
 from analysis.charts import BenchmarkCharts
+from analysis.inferential import InferentialStatistics
 
 def main():
     """Execute the complete benchmark analysis pipeline."""
@@ -32,9 +33,18 @@ def main():
     print()
     print(f"Summary rows: {len(summary_df)}")
 
+    # Perform inferential statistical analysis
+    inferential = InferentialStatistics(benchmark_df)
+
+    inferential_df = inferential.analyze()
+
+    print(inferential_df)
+
     # Create output directories if they do not exist
     csv_output = Path("outputs/csv")
     excel_output = Path("outputs/excel")
+    statistics_output = Path("outputs/statistics")
+    statistics_output.mkdir(parents=True, exist_ok=True)
 
     csv_output.mkdir(parents=True, exist_ok=True)
     excel_output.mkdir(parents=True, exist_ok=True)
@@ -48,6 +58,17 @@ def main():
     # Export Excel
     summary_df.to_excel(
         excel_output / "benchmark_summary.xlsx",
+        index=False,
+    )
+
+
+    inferential_df.to_csv(
+        statistics_output / "inferential_statistics.csv",
+        index=False,
+    )
+
+    inferential_df.to_excel(
+        statistics_output / "inferential_statistics.xlsx",
         index=False,
     )
 

@@ -1,0 +1,17 @@
+scenario,vus,mono_mean,micro_mean,mono_std,micro_std,mono_ci95,micro_ci95,t_statistic,p_value,significant,cohen_d,effect_size,Lower Latency
+create-order,10,21.9072,30.9902,0.1558,0.2695,0.387,0.6694,-50.5456,< 0.001,Yes,41.27,Large,Monolithic
+create-order,50,109.1814,146.8042,1.2561,1.1914,3.1203,2.9597,-37.6399,< 0.001,Yes,30.73,Large,Monolithic
+create-order,100,217.5992,289.2519,1.7697,2.2514,4.3961,5.5929,-43.3379,< 0.001,Yes,35.39,Large,Monolithic
+create-order,200,437.0723,571.6188,1.045,4.4944,2.5959,11.1648,-50.5042,< 0.001,Yes,41.24,Large,Monolithic
+get-orders,10,58.16,28.2364,0.1994,0.302,0.4954,0.7503,143.2042,< 0.001,Yes,116.93,Large,Microservices
+get-orders,50,287.5274,140.1308,1.6692,0.5603,4.1465,1.3919,144.9974,< 0.001,Yes,118.39,Large,Microservices
+get-orders,100,576.2745,284.6817,3.2143,1.5165,7.9849,3.7671,142.1042,< 0.001,Yes,116.03,Large,Microservices
+get-orders,200,1154.3518,566.2318,6.9734,4.4712,17.3228,11.1072,122.971,< 0.001,Yes,100.41,Large,Microservices
+login,10,168.2898,166.2843,0.1401,0.3454,0.3481,0.8581,9.3178,0.004,Yes,7.61,Large,Microservices
+login,50,845.4108,831.205,3.6321,3.5253,9.0227,8.7573,4.8611,0.008,Yes,3.97,Large,Microservices
+login,100,1687.1515,1658.5813,6.7131,3.1467,16.6762,7.8169,6.6745,0.008,Yes,5.45,Large,Microservices
+login,200,3359.5275,3309.1049,3.692,7.4832,9.1715,18.5892,10.4663,0.002,Yes,8.55,Large,Microservices
+products,10,18.362,16.1579,0.1997,0.2918,0.496,0.7248,10.7971,< 0.001,Yes,8.82,Large,Microservices
+products,50,90.7616,82.3991,0.3142,0.273,0.7806,0.6782,34.7965,< 0.001,Yes,28.41,Large,Microservices
+products,100,180.8162,162.5197,5.4407,2.5708,13.5155,6.3862,5.2664,0.015,Yes,4.3,Large,Microservices
+products,200,358.6946,317.3085,13.3023,1.0767,33.0447,2.6747,5.3712,0.032,Yes,4.39,Large,Microservices
